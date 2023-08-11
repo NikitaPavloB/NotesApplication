@@ -1,6 +1,7 @@
 # Информация о проекте
-# Необходимо написать проект, содержащий функционал работы с заметками. Программа должна уметь создавать заметку, 
-# сохранять её, читать список заметок, редактировать заметку, удалять заметку.
+# Необходимо написать проект, содержащий функционал работы с заметками.
+# Программа должна уметь создавать заметку, сохранять её, читать список заметок, редактировать заметку, удалять заметку.
+
 
 import json
 import os
@@ -70,6 +71,15 @@ class NotesApp:
         self.notes = [note for note in self.notes if note.id != note_id]
         self.save_notes()
 
+    def get_notes_by_date_range(self, start_date, end_date):
+        filtered_notes = []
+        for note in self.notes:
+            created_date = datetime.datetime.strptime(
+                note.created_at, '%Y-%m-%d %H:%M:%S').date()
+            if start_date <= created_date <= end_date:
+                filtered_notes.append(note)
+        return filtered_notes
+
 
 def main():
     app = NotesApp('notes.json')
@@ -79,7 +89,8 @@ def main():
         print("2. Создать заметку")
         print("3. Редактировать заметку")
         print("4. Удалить заметку")
-        print("5. Выйти")
+        print("5. Вывести заметки за диапазон дат")
+        print("6. Выйти")
 
         choice = input("Введите ваш выбор: ")
 
@@ -98,6 +109,26 @@ def main():
             note_id = int(input("Введите ID заметки: "))
             app.delete_note(note_id)
         elif choice == '5':
+            start_date_str = input("Введите начальную дату (гггг-мм-дд): ")
+            end_date_str = input("Введите конечную дату (гггг-мм-дд): ")
+            try:
+                start_date = datetime.datetime.strptime(
+                    start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.datetime.strptime(
+                    end_date_str, '%Y-%m-%d').date()
+                filtered_notes = app.get_notes_by_date_range(
+                    start_date, end_date)
+                print("Заметки в выбранном диапазоне дат:")
+                for note in filtered_notes:
+                    print(f"ID: {note.id}")
+                    print(f"Заголовок: {note.title}")
+                    print(f"Текст: {note.body}")
+                    print(f"Создано: {note.created_at}")
+                    print(f"Изменено: {note.updated_at}")
+                    print("-" * 30)
+            except ValueError:
+                print("Некорректный формат даты.")
+        elif choice == '6':
             break
         else:
             print("Неверный выбор. Пожалуйста, попробуйте снова.")
