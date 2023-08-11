@@ -80,6 +80,12 @@ class NotesApp:
                 filtered_notes.append(note)
         return filtered_notes
 
+    def get_note_by_id(self, note_id):
+        for note in self.notes:
+            if note.id == note_id:
+                return note
+        return None
+
 
 def main():
     app = NotesApp('notes.json')
@@ -90,7 +96,8 @@ def main():
         print("3. Редактировать заметку")
         print("4. Удалить заметку")
         print("5. Вывести заметки за диапазон дат")
-        print("6. Выйти")
+        print("6. Вывести выбранную запись")
+        print("7. Выйти")
 
         choice = input("Введите ваш выбор: ")
 
@@ -129,6 +136,17 @@ def main():
             except ValueError:
                 print("Некорректный формат даты.")
         elif choice == '6':
+            note_id = int(input("Введите ID заметки: "))
+            note = app.get_note_by_id(note_id)
+            if note:
+                print(f"ID: {note.id}")
+                print(f"Заголовок: {note.title}")
+                print(f"Текст: {note.body}")
+                print(f"Создано: {note.created_at}")
+                print(f"Изменено: {note.updated_at}")
+            else:
+                print("Заметка с указанным ID не найдена.")
+        elif choice == '7':
             break
         else:
             print("Неверный выбор. Пожалуйста, попробуйте снова.")
