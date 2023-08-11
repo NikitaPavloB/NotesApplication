@@ -58,10 +58,17 @@ class NotesApp:
             print(f"Updated At: {note.updated_at}")
             print("-" * 30)
 
-    def edit_note(self, note_id, new_title, new_body):
+    def edit_note_title(self, note_id, new_title):
         for note in self.notes:
             if note.id == note_id:
                 note.title = new_title
+                note.updated_at = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                self.save_notes()
+                break
+
+    def edit_note_body(self, note_id, new_body):
+        for note in self.notes:
+            if note.id == note_id:
                 note.body = new_body
                 note.updated_at = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 self.save_notes()
@@ -93,11 +100,12 @@ def main():
     while True:
         print("1. Читать заметки")
         print("2. Создать заметку")
-        print("3. Редактировать заметку")
-        print("4. Удалить заметку")
-        print("5. Вывести заметки за диапазон дат")
-        print("6. Вывести выбранную запись")
-        print("7. Выйти")
+        print("3. Редактировать заголовок заметки")
+        print("4. Редактировать текст заметки")
+        print("5. Удалить заметку")
+        print("6. Вывести заметки за диапазон дат")
+        print("7. Вывести выбранную запись")
+        print("8. Выйти")
 
         choice = input("Введите ваш выбор: ")
 
@@ -110,12 +118,15 @@ def main():
         elif choice == '3':
             note_id = int(input("Введите ID заметки: "))
             new_title = input("Введите новый заголовок: ")
-            new_body = input("Введите новый текст: ")
-            app.edit_note(note_id, new_title, new_body)
+            app.edit_note_title(note_id, new_title)
         elif choice == '4':
             note_id = int(input("Введите ID заметки: "))
-            app.delete_note(note_id)
+            new_body = input("Введите новый текст: ")
+            app.edit_note_body(note_id, new_body)
         elif choice == '5':
+            note_id = int(input("Введите ID заметки: "))
+            app.delete_note(note_id)
+        elif choice == '6':
             start_date_str = input("Введите начальную дату (гггг-мм-дд): ")
             end_date_str = input("Введите конечную дату (гггг-мм-дд): ")
             try:
@@ -135,7 +146,7 @@ def main():
                     print("-" * 30)
             except ValueError:
                 print("Некорректный формат даты.")
-        elif choice == '6':
+        elif choice == '7':
             note_id = int(input("Введите ID заметки: "))
             note = app.get_note_by_id(note_id)
             if note:
@@ -146,7 +157,7 @@ def main():
                 print(f"Изменено: {note.updated_at}")
             else:
                 print("Заметка с указанным ID не найдена.")
-        elif choice == '7':
+        elif choice == '8':
             break
         else:
             print("Неверный выбор. Пожалуйста, попробуйте снова.")
